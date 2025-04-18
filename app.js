@@ -4,13 +4,14 @@ if (!localStorage.getItem('tasks')) {
 }
 
 if (!localStorage.getItem('aggressiveRegime')) {
-  localStorage.setItem('aggressiveRegime', JSON.stringify([]));
+  localStorage.setItem('aggressiveRegime', JSON.stringify([1, 3, 7, 14, 21]));
 }
 
 if (!localStorage.getItem('relaxedRegime')) {
-  localStorage.setItem('relaxedRegime', JSON.stringify([]));
+  localStorage.setItem('relaxedRegime', JSON.stringify([1, 3, 7, 14, 21]));
 }
 
+// Event Listeners
 document.getElementById('add-task-btn').addEventListener('click', addTask);
 document.getElementById('view-all-tasks-btn').addEventListener('click', viewAllTasks);
 document.getElementById('reset-all-btn').addEventListener('click', resetAll);
@@ -48,6 +49,7 @@ function viewAllTasks() {
 function resetAll() {
   localStorage.removeItem('tasks');
   alert("All tasks reset!");
+  displayRevisionTasks();
 }
 
 function downloadTasks() {
@@ -105,6 +107,7 @@ function displayRevisionTasks() {
   });
 }
 
+// Function to add intervals to Aggressive and Relaxed regimes
 function addInterval(type) {
   const container = document.getElementById(type + '-intervals');
   const input = document.createElement('input');
@@ -129,4 +132,5 @@ function saveRegimes() {
   alert("Regimes updated successfully!");
 }
 
-document.addEventListener('DOMContentLoaded', displayRevisionTasks); // Call on page load
+// Call to populate the revision tasks when the page is loaded
+document.addEventListener('DOMContentLoaded', displayRevisionTasks);
