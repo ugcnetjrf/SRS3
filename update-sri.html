@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Update SRI</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Update SRT Intervals</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Update Spaced Repetition Intervals</h1>
+  <h1>Update Spaced Repetition Intervals</h1>
 
-    <label for="aggressive-interval">Aggressive Regime Interval (multiplier):</label>
-    <input type="number" id="aggressive-interval" min="1" value="1"/>
+  <div class="sri-form">
+    <label>
+      Aggressive Regime (comma-separated days):
+      <input type="text" id="sri-aggressive" placeholder="e.g., 1,2,3,5,7" />
+    </label>
 
-    <label for="relaxed-interval">Relaxed Regime Interval (multiplier):</label>
-    <input type="number" id="relaxed-interval" min="1" value="1"/>
+    <label>
+      Relaxed Regime (comma-separated days):
+      <input type="text" id="sri-relaxed" placeholder="e.g., 2,5,10,20,30" />
+    </label>
 
-    <button id="save-sri-btn">Save Intervals</button>
+    <button onclick="saveCustomSRIFromForm()">Save Intervals</button>
   </div>
 
   <script src="app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", prefillSRIForm);
+  </script>
 </body>
 </html>
