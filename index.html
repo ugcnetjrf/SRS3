@@ -1,41 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaced Repetition Tracker</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Spaced Repetition Task Tracker</h1>
-    <div class="container">
-        <!-- Add Task Section -->
-        <div class="section">
-            <h2>Add Task</h2>
-            <input type="text" id="taskTitle" placeholder="Enter Task Title">
-            <textarea id="taskDetail" placeholder="Enter Task Details"></textarea>
-            <input type="date" id="taskDate">
-            <select id="sriRegimeSelect">
-                <option value="standard">Standard</option>
-                <option value="aggressive">Aggressive</option>
-                <option value="relaxed">Relaxed</option>
-            </select>
-            <button onclick="addTask()">Add Task</button>
-        </div>
+  <div id="task-entry">
+    <h2>Add Task</h2>
+    <input type="text" id="task-title" placeholder="Enter Task Title" />
+    <input type="text" id="task-detail" placeholder="Enter Task Detail" />
 
-        <!-- Revision Tasks Section -->
-        <div class="section">
-            <h2>Revision Tasks</h2>
-            <ul id="revisionTasks"></ul>
-        </div>
+    <label for="srt-regime">Select SRT Regime:</label>
+    <select id="srt-regime">
+      <option value="standard">Standard</option>
+      <option value="aggressive">Aggressive</option>
+      <option value="relaxed">Relaxed</option>
+    </select>
 
-        <!-- All Tasks Link -->
-        <div class="section">
-            <button onclick="window.location.href='all-tasks.html'">All Tasks</button>
-        </div>
-    </div>
+    <button id="add-task-btn">Add Task</button>
+  </div>
 
-    <script src="app.js"></script>
+  <button id="view-all-tasks-btn">All Tasks</button>
+
+  <script src="app.js"></script>
 </body>
 </html>
