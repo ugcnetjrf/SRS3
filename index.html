@@ -4,33 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Spaced Repetition Task Tracker</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Spaced Repetition Task Tracker</h1>
+  <h1>Spaced Repetition Task Tracker</h1>
 
-    <div class="task-entry">
-      <input type="text" id="task-title" placeholder="Enter Task Title" />
-      <input type="text" id="task-details" placeholder="Enter Task Detail" />
-      <input type="date" id="task-date" />
-
-      <select id="srt-regime">
-        <option value="Standard" selected>Standard</option>
-        <option value="Aggressive">Aggressive</option>
-        <option value="Relaxed">Relaxed</option>
-      </select>
-
-      <button id="add-task-btn">Add Task</button>
-      <button id="view-all-tasks-btn">All Tasks</button>
-    </div>
-
-    <div class="revision-tasks">
-      <h2>Revision Tasks</h2>
-      <div id="revision-tasks-container"></div>
-    </div>
+  <div class="task-input">
+    <input type="text" id="taskTitle" placeholder="Enter Task Title" />
+    <textarea id="taskDetail" placeholder="Enter Task Detail"></textarea>
+    <input type="date" id="taskDate" />
+    <select id="srtRegime">
+      <option value="Standard" selected>Standard</option>
+      <option value="Aggressive">Aggressive</option>
+      <option value="Relaxed">Relaxed</option>
+    </select>
+    <button onclick="handleAddTask()">Add Task</button>
   </div>
 
+  <h2>Revision Tasks for Today</h2>
+  <div id="revisionTasks"></div>
+
+  <button onclick="location.href='all-tasks.html'">All Tasks</button>
+
   <script src="app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("taskDate").valueAsDate = new Date();
+      renderRevisionTasks();
+    });
+
+    function handleAddTask() {
+      const title = document.getElementById("taskTitle").value.trim();
+      const detail = document.getElementById("taskDetail").value.trim();
+      const date = document.getElementById("taskDate").value;
+      const regime = document.getElementById("srtRegime").value;
+
+      if (title && detail && date) {
+        addTask(title, detail, date, regime);
+        document.getElementById("taskTitle").value = "";
+        document.getElementById("taskDetail").value = "";
+        renderRevisionTasks();
+        alert("Task added successfully!");
+      } else {
+        alert("Please fill in all fields.");
+      }
+    }
+  </script>
 </body>
 </html>
