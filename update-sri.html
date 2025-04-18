@@ -1,29 +1,24 @@
-body {
-  font-family: Arial, sans-serif;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Update SRI</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1>Update Spaced Repetition Intervals</h1>
 
-#task-entry {
-  margin: 20px;
-}
+    <label for="aggressive-interval">Aggressive Regime Interval (multiplier):</label>
+    <input type="number" id="aggressive-interval" min="1" value="1"/>
 
-input, select {
-  margin: 10px 0;
-  padding: 10px;
-  width: 100%;
-  max-width: 300px;
-}
+    <label for="relaxed-interval">Relaxed Regime Interval (multiplier):</label>
+    <input type="number" id="relaxed-interval" min="1" value="1"/>
 
-button {
-  padding: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-}
+    <button id="save-sri-btn">Save Intervals</button>
+  </div>
 
-#task-controls {
-  margin-top: 20px;
-}
-
-#revision-tasks {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
+  <script src="app.js"></script>
+</body>
+</html>
