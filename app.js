@@ -1,3 +1,16 @@
+// Initialize tasks if not already in localStorage
+if (!localStorage.getItem('tasks')) {
+  localStorage.setItem('tasks', JSON.stringify([]));
+}
+
+if (!localStorage.getItem('aggressiveRegime')) {
+  localStorage.setItem('aggressiveRegime', JSON.stringify([]));
+}
+
+if (!localStorage.getItem('relaxedRegime')) {
+  localStorage.setItem('relaxedRegime', JSON.stringify([]));
+}
+
 document.getElementById('add-task-btn').addEventListener('click', addTask);
 document.getElementById('view-all-tasks-btn').addEventListener('click', viewAllTasks);
 document.getElementById('reset-all-btn').addEventListener('click', resetAll);
@@ -17,14 +30,15 @@ function addTask() {
     detail,
     regime,
     date: new Date().toLocaleDateString(),
-    revision: []
+    revision: [] // Initially no revision tasks
   };
 
-  const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+  const tasks = JSON.parse(localStorage.getItem('tasks'));
   tasks.push(task);
   localStorage.setItem('tasks', JSON.stringify(tasks));
 
   alert("Task added successfully!");
+  displayRevisionTasks();
 }
 
 function viewAllTasks() {
@@ -62,6 +76,7 @@ function uploadTasks() {
         const tasks = JSON.parse(e.target.result);
         localStorage.setItem('tasks', JSON.stringify(tasks));
         alert("Tasks uploaded successfully!");
+        displayRevisionTasks();
       };
       reader.readAsText(file);
     }
@@ -72,6 +87,22 @@ function uploadTasks() {
 
 function updateSRI() {
   window.location.href = "update-sri.html";
+}
+
+// Display revision tasks based on today's date
+function displayRevisionTasks() {
+  const tasks = JSON.parse(localStorage.getItem('tasks'));
+  const today = new Date().toLocaleDateString();
+  
+  const revisionTasks = tasks.filter(task => task.revision.includes(today));
+  const revisionContainer = document.getElementById('revision-tasks');
+  revisionContainer.innerHTML = ''; // Clear previous tasks
+  
+  revisionTasks.forEach(task => {
+    const taskDiv = document.createElement('div');
+    taskDiv.textContent = `${task.title}: ${task.detail}`;
+    revisionContainer.appendChild(taskDiv);
+  });
 }
 
 function addInterval(type) {
@@ -97,3 +128,5 @@ function saveRegimes() {
 
   alert("Regimes updated successfully!");
 }
+
+document.addEventListener('DOMContentLoaded', displayRevisionTasks); // Call on page load
