@@ -1,43 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaced Repetition App</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Spaced Repetition Tracker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h1>Spaced Repetition Tracker</h1>
 
-    <div id="home-page">
-        <h1>Spaced Repetition Task Manager</h1>
-        
-        <!-- SRT Regime Selection -->
-        <select id="srt-regime" class="srt-dropdown">
-            <option value="standard">Standard</option>
-            <option value="aggressive">Aggressive</option>
-            <option value="relaxed">Relaxed</option>
-        </select>
+  <div class="task-entry-controls">
+    <select id="srtRegimeSelector">
+      <option value="standard">Standard Regime</option>
+      <option value="aggressive">Aggressive Regime</option>
+      <option value="relaxed">Relaxed Regime</option>
+    </select>
+    <button onclick="toggleTaskInput()">Add Task</button>
+    <button onclick="window.location.href='all-tasks.html'">All Tasks</button>
+  </div>
 
-        <!-- Add Task Button -->
-        <button id="add-task-btn">Add Task</button>
-        <button id="view-all-tasks-btn">All Tasks</button>
-    </div>
+  <div id="taskInputSection" style="display:none; margin-top:10px;">
+    <input type="text" id="taskInput" placeholder="Enter your task">
+    <input type="date" id="taskDate">
+    <button onclick="saveTask()">Save Task</button>
+  </div>
 
-    <!-- Task Form -->
-    <div id="task-form-container">
-        <h2>Create New Task</h2>
-        <input type="text" id="task-title" placeholder="Enter task title">
-        <textarea id="task-details" placeholder="Enter task details"></textarea>
-        <input type="date" id="task-date">
-        <button id="save-task-btn">Save Task</button>
-    </div>
+  <h2>Revision Tasks for Today</h2>
+  <ul id="revisionTasksList"></ul>
 
-    <!-- Modal for Setting Custom Intervals -->
-    <div id="overlay"></div>
-    <div id="define-srt-modal">
-        <h3>Set Custom Intervals</h3>
-        <label for="day-1">+1 Days:</label>
-        <input type="number" id="day-1" min="1">
-        <label for="day-3">+3 Days:</label>
-        <input type="number" id="day-3" min="1">
-        <label for="day-7">+7 Days:</label>
+  <script src="app.js"></script>
+</body>
+</html>
