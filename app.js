@@ -9,6 +9,25 @@ const DEFAULT_SRI = {
     Relaxed: [2, 5, 10, 20, 30]
 };
 
+// Function to get the current date in IST (Indian Standard Time)
+function getISTDate() {
+  const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' };
+  const today = new Date();
+  const date = new Intl.DateTimeFormat('en-IN', options).format(today);
+  return date.split("/").reverse().join("-"); // Formats the date as YYYY-MM-DD
+}
+
+// Function to get a future date in IST by adding days to a base date
+function getFutureDate(base, days) {
+  let d = new Date(base);
+  d.setDate(d.getDate() + days);
+
+  // Convert to IST time zone
+  const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' };
+  const futureDate = new Intl.DateTimeFormat('en-IN', options).format(d);
+  return futureDate.split("/").reverse().join("-"); // Formats the date as YYYY-MM-DD
+}
+
 // Utility: Load tasks from localStorage
 function loadTasks() {
     return JSON.parse(localStorage.getItem(TASKS_KEY)) || [];
