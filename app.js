@@ -1,182 +1,215 @@
-function initializeData() {
-  if (!localStorage.getItem('tasks')) localStorage.setItem('tasks', JSON.stringify([]));
-  if (!localStorage.getItem('sri')) {
-    localStorage.setItem('sri', JSON.stringify({
-      aggressive: 1,
-      relaxed: 1,
-      standard: [1, 3, 7, 14, 21]
-    }));
-  }
-}
+// Keys for localStorage
+const TASKS_KEY = "srt_tasks";
+const SRI_KEY = "srt_intervals";
 
-initializeData();
-
-function calculateRevisionDates(startDate, regime) {
-  const sri = JSON.parse(localStorage.getItem('sri'));
-  let intervals = [];
-
-  if (regime === 'Standard') {
-    intervals = sri.standard;
-  } else if (regime === 'Aggressive') {
-    intervals = [1, 2, 4, 7, 10].map(x => x * sri.aggressive);
-  } else if (regime === 'Relaxed') {
-    intervals = [1, 5, 10, 20, 30].map(x => x * sri.relaxed);
-  }
-
-  const revisions = [];
-  const base = new Date(startDate);
-
-  intervals.forEach(days => {
-    const d = new Date(base);
-    d.setDate(d.getDate() + days);
-    revisions.push(d.toISOString().slice(0, 10));
-  });
-
-  return revisions;
-}
-
-function displayTasks() {
-  const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  const container = document.getElementById('revision-tasks-container');
-  if (!container) return;
-  container.innerHTML = '';
-
-  tasks.forEach(task => {
-    const div = document.createElement('div');
-    div.className = 'task';
-    div.innerHTML = `
-      <h3>${task.title}</h3>
-      <p>${task.details}</p>
-      <p><strong>Revision Dates:</strong> ${task.revisionDates.join(', ')}</p>
-    `;
-    container.appendChild(div);
-  });
-}
-
-window.onload = function () {
-  displayTasks();
-
-  const addBtn = document.getElementById('add-task-btn');
-  if (addBtn) {
-    addBtn.onclick = () => {
-      const title = document.getElementById('task-title').value;
-      const details = document.getElementById('task-details').value;
-      const date = document.getElementById('task-date').value;
-      const regime = document.getElementById('srt-regime').value;
-
-      if (!title || !details || !date || !regime) {
-        alert('Fill all fields!');
-        return;
-      }
-
-      const task = {
-        title, details, date, srtRegime: regime,
-        revisionDates: calculateRevisionDates(date, regime)
-      };
-
-      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-      tasks.push(task);
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-      displayTasks();
-
-      document.getElementById('task-title').value = '';
-      document.getElementById('task-details').value = '';
-      document.getElementById('task-date').value = '';
-    };
-  }
-
-  const downloadBtn = document.getElementById('download-btn');
-  if (downloadBtn) {
-    downloadBtn.onclick = () => {
-      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-      let text = '';
-      tasks.forEach(t => {
-        text += `Title: ${t.title}\nDetails: ${t.details}\nDate: ${t.date}\nSRT Regime: ${t.srtRegime}\nRevision Dates: ${t.revisionDates.join(', ')}\n\n`;
-      });
-      const blob = new Blob([text], { type: 'text/plain' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'tasks_backup.txt';
-      a.click();
-    };
-  }
-
-  const resetBtn = document.getElementById('reset-all-btn');
-  if (resetBtn) {
-    resetBtn.onclick = () => {
-      if (confirm('Delete all tasks?')) {
-        localStorage.setItem('tasks', JSON.stringify([]));
-        displayTasks();
-      }
-    };
-  }
-
-  const uploadBtn = document.getElementById('upload-btn');
-  if (uploadBtn) {
-    uploadBtn.onclick = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.txt';
-
-      input.onchange = e => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = evt => {
-          const content = evt.target.result;
-          const tasks = parseTasksFromText(content);
-          localStorage.setItem('tasks', JSON.stringify(tasks));
-          alert('Tasks uploaded!');
-          displayTasks();
-        };
-        reader.readAsText(file);
-      };
-      input.click();
-    };
-  }
-
-  const updateSriBtn = document.getElementById('update-sri-btn');
-  if (updateSriBtn) {
-    updateSriBtn.onclick = () => {
-      window.location.href = 'update-sri.html';
-    };
-  }
-
-  const saveSriBtn = document.getElementById('save-sri-btn');
-  if (saveSriBtn) {
-    saveSriBtn.onclick = () => {
-      const aggressive = parseInt(document.getElementById('aggressive-interval').value);
-      const relaxed = parseInt(document.getElementById('relaxed-interval').value);
-      const sri = JSON.parse(localStorage.getItem('sri'));
-      sri.aggressive = aggressive;
-      sri.relaxed = relaxed;
-      localStorage.setItem('sri', JSON.stringify(sri));
-      alert('SRI intervals saved!');
-    };
-  }
-
-  const viewBtn = document.getElementById('view-all-tasks-btn');
-  if (viewBtn) {
-    viewBtn.onclick = () => window.location.href = 'all-tasks.html';
-  }
+// Default spaced repetition intervals
+const DEFAULT_SRI = {
+    Standard: [1, 3, 7, 14, 21],
+    Aggressive: [1, 2, 3, 5, 7],
+    Relaxed: [2, 5, 10, 20, 30]
 };
 
-function parseTasksFromText(text) {
-  const lines = text.trim().split('\n');
-  const tasks = [];
-  let task = {};
+// Utility: Load tasks from localStorage
+function loadTasks() {
+    return JSON.parse(localStorage.getItem(TASKS_KEY)) || [];
+}
 
-  lines.forEach(line => {
-    if (line.startsWith('Title:')) {
-      if (Object.keys(task).length) tasks.push(task);
-      task = { title: line.slice(6).trim() };
-    } else if (line.startsWith('Details:')) task.details = line.slice(8).trim();
-    else if (line.startsWith('Date:')) task.date = line.slice(5).trim();
-    else if (line.startsWith('SRT Regime:')) task.srtRegime = line.slice(11).trim();
-    else if (line.startsWith('Revision Dates:')) {
-      task.revisionDates = line.slice(16).split(',').map(d => d.trim());
+// Utility: Save tasks to localStorage
+function saveTasks(tasks) {
+    localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+}
+
+// Utility: Load SRI from localStorage
+function loadSRI() {
+    return JSON.parse(localStorage.getItem(SRI_KEY)) || DEFAULT_SRI;
+}
+
+// Utility: Save SRI to localStorage
+function saveSRI(sri) {
+    localStorage.setItem(SRI_KEY, JSON.stringify(sri));
+}
+
+// Generate revision dates based on selected regime
+function generateRevisions(startDate, regime) {
+    const sri = loadSRI();
+    const intervals = sri[regime] || DEFAULT_SRI.Standard;
+    return intervals.map(days => {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + days);
+        return date.toISOString().split("T")[0];
+    });
+}
+
+// Add a new task
+function addTask(title, detail, date, regime) {
+    const tasks = loadTasks();
+    const revisions = generateRevisions(new Date(date), regime);
+    const task = {
+        title,
+        detail,
+        date,
+        regime,
+        revisions: revisions.map(date => ({ date, status: false }))
+    };
+    tasks.push(task);
+    saveTasks(tasks);
+}
+
+// Render today's revision tasks
+function renderRevisionTasks() {
+    const container = document.getElementById("revisionTasks");
+    if (!container) return;
+
+    const tasks = loadTasks();
+    const today = new Date().toISOString().split("T")[0];
+    container.innerHTML = "";
+
+    tasks.forEach((task, tIndex) => {
+        task.revisions.forEach((rev, rIndex) => {
+            if (rev.date === today) {
+                const div = document.createElement("div");
+                div.className = `task-item ${rev.status ? "done" : "due"}`;
+                div.innerHTML = `
+                    <input type="checkbox" ${rev.status ? "checked" : ""} onchange="toggleRevisionStatus(${tIndex}, ${rIndex}, this)">
+                    <span class="task-title" onclick="toggleDetail(this)">${task.title}</span>
+                    <div class="task-detail" style="display:none">${task.detail}</div>
+                `;
+                container.appendChild(div);
+            }
+        });
+    });
+}
+
+// Toggle revision task status
+function toggleRevisionStatus(taskIndex, revIndex, checkbox) {
+    const tasks = loadTasks();
+    tasks[taskIndex].revisions[revIndex].status = checkbox.checked;
+    saveTasks(tasks);
+    renderRevisionTasks();
+}
+
+// Show/hide task detail
+function toggleDetail(span) {
+    const detail = span.nextElementSibling;
+    detail.style.display = detail.style.display === "none" ? "block" : "none";
+}
+
+// Render all tasks on All Tasks page
+function renderAllTasks() {
+    const container = document.getElementById("allTasksContainer");
+    if (!container) return;
+
+    const tasks = loadTasks();
+    container.innerHTML = "";
+
+    const grouped = {};
+    tasks.forEach(task => {
+        if (!grouped[task.date]) grouped[task.date] = [];
+        grouped[task.date].push(task);
+    });
+
+    Object.keys(grouped).sort().forEach(date => {
+        const section = document.createElement("div");
+        section.innerHTML = `<h3>${date}</h3>`;
+
+        grouped[date].forEach((task, index) => {
+            const taskIndex = tasks.findIndex(
+                t => t.title === task.title && t.date === task.date
+            );
+            const div = document.createElement("div");
+            div.className = "task-item";
+            div.innerHTML = `
+                <strong>${task.title}</strong><br>
+                <div>${task.detail}</div>
+                <div>Regime: ${task.regime}</div>
+                <button onclick="deleteTask(${taskIndex})">Delete</button>
+            `;
+            section.appendChild(div);
+        });
+
+        container.appendChild(section);
+    });
+}
+
+// Delete a single task
+function deleteTask(index) {
+    const tasks = loadTasks();
+    tasks.splice(index, 1);
+    saveTasks(tasks);
+    renderAllTasks();
+}
+
+// Reset all tasks
+function resetAllTasks() {
+    if (confirm("Are you sure you want to delete all tasks?")) {
+        localStorage.removeItem(TASKS_KEY);
+        renderAllTasks();
+        renderRevisionTasks();
     }
-  });
+}
 
-  if (Object.keys(task).length) tasks.push(task);
-  return tasks;
+// Download tasks to file
+function downloadTasks() {
+    const tasks = loadTasks();
+    const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "tasks_backup.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// Upload tasks from .txt file
+function uploadTasks(event) {
+    const file = event.target.files[0];
+    if (!file || file.type !== "text/plain") {
+        alert("Please upload a valid .txt file.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            const tasks = JSON.parse(e.target.result);
+            if (!Array.isArray(tasks)) throw new Error("Invalid format");
+            saveTasks(tasks);
+            renderAllTasks();
+            renderRevisionTasks();
+            alert("Tasks uploaded successfully.");
+        } catch (err) {
+            alert("Invalid file content.");
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Save updated SRI from update-sri.html
+function saveCustomSRIFromForm() {
+    const modes = ["Aggressive", "Relaxed"];
+    const sri = loadSRI();
+
+    modes.forEach(mode => {
+        const input = document.getElementById(`sri-${mode.toLowerCase()}`);
+        if (input) {
+            sri[mode] = input.value
+                .split(",")
+                .map(v => parseInt(v.trim()))
+                .filter(n => !isNaN(n));
+        }
+    });
+
+    saveSRI(sri);
+    alert("Custom SRI settings updated.");
+}
+
+// Prefill SRI form on update-sri.html
+function prefillSRIForm() {
+    const sri = loadSRI();
+    if (document.getElementById("sri-aggressive")) {
+        document.getElementById("sri-aggressive").value = sri.Aggressive.join(", ");
+    }
+    if (document.getElementById("sri-relaxed")) {
+        document.getElementById("sri-relaxed").value = sri.Relaxed.join(", ");
+    }
 }
