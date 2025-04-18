@@ -1,35 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update SRI</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update SRI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Update Spaced Repetition Intervals</h1>
-    
-    <!-- Aggressive Regime Input Section -->
-    <div class="section">
-        <h2>Aggressive Regime</h2>
-        <div id="aggressiveInputs">
-            <!-- Inputs will be dynamically added here -->
-        </div>
-        <button onclick="addInterval('aggressive')">Add Interval</button>
-        <button onclick="updateAggressiveRegime()">Save Aggressive Regime</button>
-    </div>
+  <h2>Update SRI Regimes</h2>
 
-    <!-- Relaxed Regime Input Section -->
-    <div class="section">
-        <h2>Relaxed Regime</h2>
-        <div id="relaxedInputs">
-            <!-- Inputs will be dynamically added here -->
-        </div>
-        <button onclick="addInterval('relaxed')">Add Interval</button>
-        <button onclick="updateRelaxedRegime()">Save Relaxed Regime</button>
-    </div>
+  <div>
+    <h3>Aggressive Regime</h3>
+    <div id="aggressive-intervals"></div>
+    <button onclick="addInterval('aggressive')">Add Interval</button>
+  </div>
 
-    <script src="app.js"></script>
+  <div>
+    <h3>Relaxed Regime</h3>
+    <div id="relaxed-intervals"></div>
+    <button onclick="addInterval('relaxed')">Add Interval</button>
+  </div>
+
+  <button onclick="saveRegimes()">Save Regimes</button>
+
+  <script src="app.js"></script>
 </body>
 </html>
