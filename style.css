@@ -1,0 +1,89 @@
+/* Existing Styles for Home Page */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+#home-page {
+    padding: 20px;
+    text-align: center;
+}
+
+#home-page h1 {
+    color: #333;
+}
+
+.srt-dropdown {
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+#task-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+textarea, input[type="date"] {
+    padding: 10px;
+    margin: 5px;
+    width: 200px;
+    font-size: 16px;
+}
+
+/* Modal Styles */
+#define-srt-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 1000;
+}
+
+#define-srt-modal input[type="number"] {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+#define-srt-modal button {
+    margin-top: 10px;
+}
+
+#close-modal-btn {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+#save-intervals-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Overlay to block content behind the modal */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 999;
+}
