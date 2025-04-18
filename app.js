@@ -9,23 +9,20 @@ const DEFAULT_SRI = {
     Relaxed: [2, 5, 10, 20, 30]
 };
 
-// Function to get the current date in IST (Indian Standard Time)
-function getISTDate() {
-  const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' };
-  const today = new Date();
-  const date = new Intl.DateTimeFormat('en-IN', options).format(today);
-  return date.split("/").reverse().join("-"); // Formats the date as YYYY-MM-DD
+// IST offset in minutes (UTC+5:30)
+const IST_OFFSET_MINUTES = 330;
+
+// Utility: Get today's date in IST (yyyy-mm-dd)
+function getTodayIST() {
+    const nowUTC = new Date();
+    const istTime = new Date(nowUTC.getTime() + IST_OFFSET_MINUTES * 60000);
+    return istTime.toISOString().split("T")[0];
 }
 
-// Function to get a future date in IST by adding days to a base date
-function getFutureDate(base, days) {
-  let d = new Date(base);
-  d.setDate(d.getDate() + days);
-
-  // Convert to IST time zone
-  const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' };
-  const futureDate = new Intl.DateTimeFormat('en-IN', options).format(d);
-  return futureDate.split("/").reverse().join("-"); // Formats the date as YYYY-MM-DD
+// Utility: Convert a Date to IST yyyy-mm-dd
+function convertToISTDateString(date) {
+    const istTime = new Date(date.getTime() + IST_OFFSET_MINUTES * 60000);
+    return istTime.toISOString().split("T")[0];
 }
 
 // Utility: Load tasks from localStorage
@@ -55,7 +52,7 @@ function generateRevisions(startDate, regime) {
     return intervals.map(days => {
         const date = new Date(startDate);
         date.setDate(date.getDate() + days);
-        return date.toISOString().split("T")[0];
+        return convertToISTDateString(date);
     });
 }
 
@@ -80,7 +77,7 @@ function renderRevisionTasks() {
     if (!container) return;
 
     const tasks = loadTasks();
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayIST();
     container.innerHTML = "";
 
     tasks.forEach((task, tIndex) => {
