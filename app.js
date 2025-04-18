@@ -1,136 +1,182 @@
-// Initialize tasks if not already in localStorage
-if (!localStorage.getItem('tasks')) {
-  localStorage.setItem('tasks', JSON.stringify([]));
+function initializeData() {
+  if (!localStorage.getItem('tasks')) localStorage.setItem('tasks', JSON.stringify([]));
+  if (!localStorage.getItem('sri')) {
+    localStorage.setItem('sri', JSON.stringify({
+      aggressive: 1,
+      relaxed: 1,
+      standard: [1, 3, 7, 14, 21]
+    }));
+  }
 }
 
-if (!localStorage.getItem('aggressiveRegime')) {
-  localStorage.setItem('aggressiveRegime', JSON.stringify([1, 3, 7, 14, 21]));
+initializeData();
+
+function calculateRevisionDates(startDate, regime) {
+  const sri = JSON.parse(localStorage.getItem('sri'));
+  let intervals = [];
+
+  if (regime === 'Standard') {
+    intervals = sri.standard;
+  } else if (regime === 'Aggressive') {
+    intervals = [1, 2, 4, 7, 10].map(x => x * sri.aggressive);
+  } else if (regime === 'Relaxed') {
+    intervals = [1, 5, 10, 20, 30].map(x => x * sri.relaxed);
+  }
+
+  const revisions = [];
+  const base = new Date(startDate);
+
+  intervals.forEach(days => {
+    const d = new Date(base);
+    d.setDate(d.getDate() + days);
+    revisions.push(d.toISOString().slice(0, 10));
+  });
+
+  return revisions;
 }
 
-if (!localStorage.getItem('relaxedRegime')) {
-  localStorage.setItem('relaxedRegime', JSON.stringify([1, 3, 7, 14, 21]));
-}
-
-// Event Listeners
-document.getElementById('add-task-btn').addEventListener('click', addTask);
-document.getElementById('view-all-tasks-btn').addEventListener('click', viewAllTasks);
-document.getElementById('reset-all-btn').addEventListener('click', resetAll);
-document.getElementById('download-btn').addEventListener('click', downloadTasks);
-document.getElementById('upload-btn').addEventListener('click', uploadTasks);
-document.getElementById('update-sri-btn').addEventListener('click', updateSRI);
-
-function addTask() {
-  const title = document.getElementById('task-title').value;
-  const detail = document.getElementById('task-detail').value;
-  const regime = document.getElementById('srt-regime').value;
-
-  if (!title || !detail) return alert("Please enter both title and detail");
-
-  const task = {
-    title,
-    detail,
-    regime,
-    date: new Date().toLocaleDateString(),
-    revision: [] // Initially no revision tasks
-  };
-
-  const tasks = JSON.parse(localStorage.getItem('tasks'));
-  tasks.push(task);
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  alert("Task added successfully!");
-  displayRevisionTasks();
-}
-
-function viewAllTasks() {
-  window.location.href = "all-tasks.html";
-}
-
-function resetAll() {
-  localStorage.removeItem('tasks');
-  alert("All tasks reset!");
-  displayRevisionTasks();
-}
-
-function downloadTasks() {
+function displayTasks() {
   const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  const tasksText = JSON.stringify(tasks, null, 2);
-  
-  const blob = new Blob([tasksText], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'tasks_backup.txt';
-  a.click();
-}
+  const container = document.getElementById('revision-tasks-container');
+  if (!container) return;
+  container.innerHTML = '';
 
-function uploadTasks() {
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = '.txt';
-  
-  fileInput.onchange = function(event) {
-    const file = event.target.files[0];
-    
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const tasks = JSON.parse(e.target.result);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        alert("Tasks uploaded successfully!");
-        displayRevisionTasks();
-      };
-      reader.readAsText(file);
-    }
-  };
-  
-  fileInput.click();
-}
-
-function updateSRI() {
-  window.location.href = "update-sri.html";
-}
-
-// Display revision tasks based on today's date
-function displayRevisionTasks() {
-  const tasks = JSON.parse(localStorage.getItem('tasks'));
-  const today = new Date().toLocaleDateString();
-  
-  const revisionTasks = tasks.filter(task => task.revision.includes(today));
-  const revisionContainer = document.getElementById('revision-tasks');
-  revisionContainer.innerHTML = ''; // Clear previous tasks
-  
-  revisionTasks.forEach(task => {
-    const taskDiv = document.createElement('div');
-    taskDiv.textContent = `${task.title}: ${task.detail}`;
-    revisionContainer.appendChild(taskDiv);
+  tasks.forEach(task => {
+    const div = document.createElement('div');
+    div.className = 'task';
+    div.innerHTML = `
+      <h3>${task.title}</h3>
+      <p>${task.details}</p>
+      <p><strong>Revision Dates:</strong> ${task.revisionDates.join(', ')}</p>
+    `;
+    container.appendChild(div);
   });
 }
 
-// Function to add intervals to Aggressive and Relaxed regimes
-function addInterval(type) {
-  const container = document.getElementById(type + '-intervals');
-  const input = document.createElement('input');
-  input.type = 'number';
-  input.min = '1';
-  input.placeholder = 'Enter day interval';
-  container.appendChild(input);
+window.onload = function () {
+  displayTasks();
+
+  const addBtn = document.getElementById('add-task-btn');
+  if (addBtn) {
+    addBtn.onclick = () => {
+      const title = document.getElementById('task-title').value;
+      const details = document.getElementById('task-details').value;
+      const date = document.getElementById('task-date').value;
+      const regime = document.getElementById('srt-regime').value;
+
+      if (!title || !details || !date || !regime) {
+        alert('Fill all fields!');
+        return;
+      }
+
+      const task = {
+        title, details, date, srtRegime: regime,
+        revisionDates: calculateRevisionDates(date, regime)
+      };
+
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.push(task);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      displayTasks();
+
+      document.getElementById('task-title').value = '';
+      document.getElementById('task-details').value = '';
+      document.getElementById('task-date').value = '';
+    };
+  }
+
+  const downloadBtn = document.getElementById('download-btn');
+  if (downloadBtn) {
+    downloadBtn.onclick = () => {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      let text = '';
+      tasks.forEach(t => {
+        text += `Title: ${t.title}\nDetails: ${t.details}\nDate: ${t.date}\nSRT Regime: ${t.srtRegime}\nRevision Dates: ${t.revisionDates.join(', ')}\n\n`;
+      });
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'tasks_backup.txt';
+      a.click();
+    };
+  }
+
+  const resetBtn = document.getElementById('reset-all-btn');
+  if (resetBtn) {
+    resetBtn.onclick = () => {
+      if (confirm('Delete all tasks?')) {
+        localStorage.setItem('tasks', JSON.stringify([]));
+        displayTasks();
+      }
+    };
+  }
+
+  const uploadBtn = document.getElementById('upload-btn');
+  if (uploadBtn) {
+    uploadBtn.onclick = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.txt';
+
+      input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = evt => {
+          const content = evt.target.result;
+          const tasks = parseTasksFromText(content);
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+          alert('Tasks uploaded!');
+          displayTasks();
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    };
+  }
+
+  const updateSriBtn = document.getElementById('update-sri-btn');
+  if (updateSriBtn) {
+    updateSriBtn.onclick = () => {
+      window.location.href = 'update-sri.html';
+    };
+  }
+
+  const saveSriBtn = document.getElementById('save-sri-btn');
+  if (saveSriBtn) {
+    saveSriBtn.onclick = () => {
+      const aggressive = parseInt(document.getElementById('aggressive-interval').value);
+      const relaxed = parseInt(document.getElementById('relaxed-interval').value);
+      const sri = JSON.parse(localStorage.getItem('sri'));
+      sri.aggressive = aggressive;
+      sri.relaxed = relaxed;
+      localStorage.setItem('sri', JSON.stringify(sri));
+      alert('SRI intervals saved!');
+    };
+  }
+
+  const viewBtn = document.getElementById('view-all-tasks-btn');
+  if (viewBtn) {
+    viewBtn.onclick = () => window.location.href = 'all-tasks.html';
+  }
+};
+
+function parseTasksFromText(text) {
+  const lines = text.trim().split('\n');
+  const tasks = [];
+  let task = {};
+
+  lines.forEach(line => {
+    if (line.startsWith('Title:')) {
+      if (Object.keys(task).length) tasks.push(task);
+      task = { title: line.slice(6).trim() };
+    } else if (line.startsWith('Details:')) task.details = line.slice(8).trim();
+    else if (line.startsWith('Date:')) task.date = line.slice(5).trim();
+    else if (line.startsWith('SRT Regime:')) task.srtRegime = line.slice(11).trim();
+    else if (line.startsWith('Revision Dates:')) {
+      task.revisionDates = line.slice(16).split(',').map(d => d.trim());
+    }
+  });
+
+  if (Object.keys(task).length) tasks.push(task);
+  return tasks;
 }
-
-function saveRegimes() {
-  const aggressiveIntervals = Array.from(document.getElementById('aggressive-intervals').querySelectorAll('input'))
-                                    .map(input => parseInt(input.value))
-                                    .filter(val => !isNaN(val));
-
-  const relaxedIntervals = Array.from(document.getElementById('relaxed-intervals').querySelectorAll('input'))
-                                 .map(input => parseInt(input.value))
-                                 .filter(val => !isNaN(val));
-
-  localStorage.setItem('aggressiveRegime', JSON.stringify(aggressiveIntervals));
-  localStorage.setItem('relaxedRegime', JSON.stringify(relaxedIntervals));
-
-  alert("Regimes updated successfully!");
-}
-
-// Call to populate the revision tasks when the page is loaded
-document.addEventListener('DOMContentLoaded', displayRevisionTasks);
