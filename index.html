@@ -3,47 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaced Repetition Tasks</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Spaced Repetition App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="home-container">
-        <div class="header">
-            <h1>Spaced Repetition Tasks</h1>
-        </div>
+
+    <div id="home-page">
+        <h1>Spaced Repetition Task Manager</h1>
         
-        <div class="controls">
-            <!-- SRT regime dropdown -->
-            <select id="srt-regime" class="srt-dropdown">
-                <option value="standard">Standard (1, 3, 7, 14, 21 days)</option>
-                <option value="aggressive">Aggressive</option>
-                <option value="relaxed">Relaxed</option>
-            </select>
+        <!-- SRT Regime Selection -->
+        <select id="srt-regime" class="srt-dropdown">
+            <option value="standard">Standard</option>
+            <option value="aggressive">Aggressive</option>
+            <option value="relaxed">Relaxed</option>
+        </select>
 
-            <!-- Add Task button -->
-            <button id="add-task-btn" class="add-task-btn">Add Task</button>
-        </div>
-
-        <div id="task-form-container" class="task-form-container" style="display: none;">
-            <label for="task-date">Select Task Date:</label>
-            <input type="date" id="task-date" value="2025-04-19">
-
-            <label for="task-details">Enter Task Details:</label>
-            <textarea id="task-details" placeholder="Enter your task details here..."></textarea>
-
-            <button id="save-task-btn">Save Task</button>
-        </div>
-
-        <div class="revision-tasks-section">
-            <h2>Revision Tasks</h2>
-            <!-- Display revision tasks here dynamically -->
-        </div>
-
-        <div class="all-tasks-section">
-            <button id="all-tasks-btn">All Tasks</button>
-        </div>
+        <!-- Add Task Button -->
+        <button id="add-task-btn">Add Task</button>
+        <button id="view-all-tasks-btn">All Tasks</button>
     </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+    <!-- Task Form -->
+    <div id="task-form-container">
+        <h2>Create New Task</h2>
+        <input type="text" id="task-title" placeholder="Enter task title">
+        <textarea id="task-details" placeholder="Enter task details"></textarea>
+        <input type="date" id="task-date">
+        <button id="save-task-btn">Save Task</button>
+    </div>
+
+    <!-- Modal for Setting Custom Intervals -->
+    <div id="overlay"></div>
+    <div id="define-srt-modal">
+        <h3>Set Custom Intervals</h3>
+        <label for="day-1">+1 Days:</label>
+        <input type="number" id="day-1" min="1">
+        <label for="day-3">+3 Days:</label>
+        <input type="number" id="day-3" min="1">
+        <label for="day-7">+7 Days:</label>
