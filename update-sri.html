@@ -1,29 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Update SRI</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+body {
+  font-family: Arial, sans-serif;
+}
 
-  <h2>Update SRI Regimes</h2>
+#task-entry {
+  margin: 20px;
+}
 
-  <div>
-    <h3>Aggressive Regime</h3>
-    <div id="aggressive-intervals"></div>
-    <button onclick="addInterval('aggressive')">Add Interval</button>
-  </div>
+input, select {
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  max-width: 300px;
+}
 
-  <div>
-    <h3>Relaxed Regime</h3>
-    <div id="relaxed-intervals"></div>
-    <button onclick="addInterval('relaxed')">Add Interval</button>
-  </div>
+button {
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+}
 
-  <button onclick="saveRegimes()">Save Regimes</button>
+#task-controls {
+  margin-top: 20px;
+}
 
-  <script src="app.js"></script>
-</body>
-</html>
+#revision-tasks {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
