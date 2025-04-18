@@ -1,58 +1,90 @@
 body {
   font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 20px;
+  margin: 20px;
+  background: #f9f9f9;
 }
 
-.container {
+h1, h2, h3 {
+  color: #333;
+}
+
+.task-input {
+  margin-bottom: 20px;
+}
+
+.task-input input[type="text"],
+.task-input textarea,
+.task-input input[type="date"],
+.task-input select {
+  display: block;
+  margin: 8px 0;
+  padding: 8px;
+  width: 300px;
+}
+
+.task-input button {
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+
+#revisionTasks,
+#allTasksContainer {
+  margin-top: 20px;
+}
+
+.task-item {
   background: #fff;
-  padding: 20px;
-  border-radius: 6px;
-  max-width: 800px;
-  margin: auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: 5px;
 }
 
-h1, h2 {
-  text-align: center;
+.task-item.due {
+  border-left: 5px solid orange;
 }
 
-.task-entry,
-.revision-tasks,
+.task-item.done {
+  border-left: 5px solid green;
+  opacity: 0.7;
+}
+
+.task-title {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.task-detail {
+  margin-top: 5px;
+}
+
 .top-buttons {
   margin-bottom: 20px;
 }
 
-input[type="text"],
-input[type="date"],
-input[type="number"],
-select {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  padding: 10px 15px;
-  margin: 5px;
-  border: none;
-  background: #007BFF;
-  color: white;
-  border-radius: 4px;
+.top-buttons button,
+.upload-label {
+  margin-right: 10px;
+  padding: 6px 12px;
   cursor: pointer;
 }
 
-button:hover {
-  background: #0056b3;
+.upload-label {
+  background: #ddd;
+  display: inline-block;
+  border-radius: 4px;
 }
 
-.task {
-  background: #e9f7ef;
-  border-left: 5px solid #28a745;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
+.sri-form {
+  max-width: 400px;
+}
+
+.sri-form label {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.sri-form input[type="text"] {
+  width: 100%;
+  padding: 6px;
 }
