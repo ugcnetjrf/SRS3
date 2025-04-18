@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>All Tasks</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <div class="container">
+    <h1>All Tasks (Grouped by Date)</h1>
 
-  <h2>All Tasks</h2>
+    <div class="top-buttons">
+      <button id="download-btn">Download</button>
+      <button id="upload-btn">Upload Tasks</button>
+      <button id="reset-all-btn">Reset All</button>
+      <button id="update-sri-btn">Update SRI</button>
+    </div>
 
-  <div id="task-list"></div>
-
-  <div id="task-controls">
-    <button id="reset-all-btn">Reset All</button>
-    <button id="download-btn">Download</button>
-    <button id="upload-btn">Upload Tasks</button>
-    <button id="update-sri-btn">Update SRI</button>
+    <div id="all-tasks-container"></div>
   </div>
 
   <script src="app.js"></script>
