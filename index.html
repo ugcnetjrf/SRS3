@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Manager</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spaced Repetition Task Tracker</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
+  <div class="container">
+    <h1>Spaced Repetition Task Tracker</h1>
 
-  <div id="task-entry">
-    <h2>Add Task</h2>
-    <input type="text" id="task-title" placeholder="Enter Task Title" />
-    <input type="text" id="task-detail" placeholder="Enter Task Detail" />
+    <div class="task-entry">
+      <input type="text" id="task-title" placeholder="Enter Task Title" />
+      <input type="text" id="task-details" placeholder="Enter Task Detail" />
+      <input type="date" id="task-date" />
 
-    <label for="srt-regime">Select SRT Regime:</label>
-    <select id="srt-regime">
-      <option value="standard">Standard</option>
-      <option value="aggressive">Aggressive</option>
-      <option value="relaxed">Relaxed</option>
-    </select>
+      <select id="srt-regime">
+        <option value="Standard" selected>Standard</option>
+        <option value="Aggressive">Aggressive</option>
+        <option value="Relaxed">Relaxed</option>
+      </select>
 
-    <button id="add-task-btn">Add Task</button>
+      <button id="add-task-btn">Add Task</button>
+      <button id="view-all-tasks-btn">All Tasks</button>
+    </div>
+
+    <div class="revision-tasks">
+      <h2>Revision Tasks</h2>
+      <div id="revision-tasks-container"></div>
+    </div>
   </div>
-
-  <h2>Revision Tasks</h2>
-  <div id="revision-tasks">
-    <!-- This section will show the tasks due for revision -->
-  </div>
-
-  <button id="view-all-tasks-btn">All Tasks</button>
 
   <script src="app.js"></script>
 </body>
